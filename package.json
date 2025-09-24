@@ -2,10 +2,11 @@
   "name": "practice",
   "version": "1.0.0",
   "description": "",
-  "source": "src/index.html",
+  "source": "index.html",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build",
+    "deploy": "gh-pages -d dist",
+    "start": "parcel"
   },
   "author": "Nikolay",
   "license": "ISC",
