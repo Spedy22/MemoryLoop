@@ -1,0 +1,60 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+}
+
+img,
+picture {
+  display: block;
+}
+
+body {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  background-color: #f2f2f2;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  width: 643px;
+  padding: 90px 64px;
+
+  border-radius: 15px;
+
+  background-color: #ffffff;
+  box-shadow: 0 4px 50px 0 rgba(0, 0, 0, 0.05);
+}
+
