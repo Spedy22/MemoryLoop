@@ -1,9 +1,63 @@
-<!DOCTYPE html><html lang=en><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.min.css integrity="sha512-q6WgHqiHlKyOqslT/lgBgodhd03Wp4BEqKeW6nNtlOY4quzyG3VoQKFrieaCeSnuVseNKRGpGeDU3qPmabCANg==" crossorigin=anonymous referrerpolicy=no-referrer><link rel=stylesheet href=/MemoryLoop.f42e2b82.css><title>Memory Loop</title><body>
-    <div class=container>
-      <div class=form>
-        
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.min.css" integrity="sha512-q6WgHqiHlKyOqslT/lgBgodhd03Wp4BEqKeW6nNtlOY4quzyG3VoQKFrieaCeSnuVseNKRGpGeDU3qPmabCANg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/MemoryLoop.b2625c6b.css">
+    <title>Memory Loop</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="wrapper">
+        <form class="form">
+          <label class="form__label">
+            <textarea placeholder=" " class="form__search"></textarea>
+            <span class="form__placeholder">Enter your review task</span>
+          </label>
+          <button class="form__submit" type="submit">Create review</button>
+        </form>
+        <span class="line"></span>
+        <section class="task">
+          <div class="task__wrapper">
+            <h2 class="task__title">Planned tasks</h2>
+            <h2 class="task__title">Current tasks</h2>
+          </div>
+          <div class="task__wrapper--box">
+            <div class="task__box task__box--planned"></div>
+            <div class="task__box task__box--current"></div>
+          </div>
+        </section>
       </div>
     </div>
-    <script type=module src=/MemoryLoop.66df7f57.js></script>
+    <div class="backdrop">
+      <div class="modal">
+        <h1 class="hero__title hero__title--modal">
+          Remember hundreds of times more effectively!
+        </h1>
+        <p class="modal__subtitle">
+          With spaced repetition, you review information at increasing
+          intervals, just before you are about to forget it. This method
+          strengthens memory, saves time, and makes learning more natural and
+          long-lasting.
+        </p>
+        <button class="modal__btn">Get started</button>
+      </div>
+    </div>
+
+    <!-- <div class="backdrop hidden">
+      <div class="modal-clear">
+        <p class="modal__subtitle">
+          Are you sure you want to delete all tasks - ?
+        </p>
+        <div class="modal__wrapper">
+          <button class="modal__btn modal__btn--delete">Delete</button>
+          <button class="modal__btn modal__btn--cancel">Cancel</button>
+        </div>
+      </div>
+    </div> -->
+    <script type="module" src="/MemoryLoop.0be11312.js"></script>
   
 
+</body></html>
