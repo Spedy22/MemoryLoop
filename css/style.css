@@ -212,7 +212,7 @@ body {
   align-items: center;
   justify-content: space-between;
 
-background-color: rgba(255, 251, 246, 0.74);
+  background-color: rgba(255, 251, 246, 0.74);
   box-shadow: 0 26px 40px rgba(0, 0, 0, 0.35);
 }
 
@@ -252,17 +252,18 @@ background-color: rgba(255, 251, 246, 0.74);
   border: 5px solid #53b175;
 }
 
-
-
-
-
-
-
-
-
-
-
-
+.visually-hidden {
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  margin: -1px;
+}
 
 .backdrop {
   position: fixed;
@@ -295,7 +296,7 @@ background-color: rgba(255, 251, 246, 0.74);
   align-items: center;
   justify-content: space-between;
 
-background-color: rgba(255, 251, 246, 0.74);
+  background-color: rgba(255, 251, 246, 0.74);
   box-shadow: 0 26px 40px rgba(0, 0, 0, 0.35);
 }
 
@@ -333,12 +334,6 @@ background-color: rgba(255, 251, 246, 0.74);
 .modal__btn:active {
   border: 5px solid #53b175;
 }
-
-
-
-
-
-
 
 .card {
   position: relative;
@@ -379,7 +374,6 @@ background-color: rgba(255, 251, 246, 0.74);
   align-items: center;
   justify-content: center;
 }
-
 
 .card__svg {
   width: 14px;

@@ -60,11 +60,11 @@ function onDeleteTask(e) {
 
   for (let i = 0; i < tasks.length; i++) {
     if (
-      tasks[i].name === e.target.closest(".card").children[0].textContent &&
-      tasks[i].time ===
-        Number(e.target.closest(".card").children[1].textContent)
+      tasks[i].id === Number(e.target.closest(".card").children[2].textContent)
     ) {
       tasks.splice(i, 1);
+      console.log(i);
+      
       localStorage.setItem("userTask", JSON.stringify(tasks));
       refs.tasksBoxPlanned.innerHTML = tasks.map(createCards).join(" ");
       return;
@@ -83,19 +83,23 @@ function createData(value) {
   return [
     {
       name: value,
-      time: 3600,
+      time: 3600000,
+      id: Date.now(),
     },
     {
       name: value,
-      time: 86400,
+      time: 86400000,
+      id: Date.now(),
     },
     {
       name: value,
-      time: 604800,
+      time: 604800000,
+      id: Date.now(),
     },
     {
       name: value,
-      time: 2592000,
+      time: 2592000000,
+      id: Date.now(),
     },
   ];
 }
@@ -104,7 +108,8 @@ function createCards(value) {
   return `
   <div class="card">
     <p class="card__subtitle">${value.name}</p>
-    <span class="time">${value.time}</span>
+    <span class="time">${changeTime(value.time)}</span>
+    <span class="visually-hidden">${value.id}</span>
     <button type="button" class="card__button">
       <svg class="card__svg">
         <use href="./img/symbol-defs.svg#icon-x-close"></use>
@@ -112,4 +117,16 @@ function createCards(value) {
     </button>
   </div>
   `;
+}
+
+function changeTime(ms) {
+  let sec = Math.floor(ms / 1000) % 60;
+  let min = Math.floor(ms / (1000 * 60)) % 60;
+  let hrs = Math.floor(ms / (1000 * 60 * 60)) % 24;
+  let days = Math.floor(ms / (1000 * 60 * 60 * 24));
+
+  return `${String(days).padStart(2, "0")}:${String(hrs).padStart(
+    2,
+    "0"
+  )}:${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 }

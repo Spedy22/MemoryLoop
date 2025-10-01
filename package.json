@@ -4,8 +4,7 @@
   "description": "",
   "source": "index.html",
   "scripts": {
-    "build": "parcel build index.html",
-    "deploy": "gh-pages -d dist",
+    "build": "parcel build index.html --public-url /MemoryLoop",
     "start": "parcel"
   },
   "author": "Nikolay",
