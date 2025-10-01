@@ -2,9 +2,9 @@
   "name": "practice",
   "version": "1.0.0",
   "description": "",
-  "source": "index.html",
+  "source": "./src/index.html",
   "scripts": {
-    "build": "parcel build index.html --public-url /MemoryLoop",
+    "build": "parcel build src/index.html --dist-dir docs --public-url ./",
     "start": "parcel"
   },
   "author": "Nikolay",
