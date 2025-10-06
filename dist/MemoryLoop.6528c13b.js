@@ -671,10 +671,11 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _notiflix = require("notiflix");
 var _notiflixDefault = parcelHelpers.interopDefault(_notiflix);
 const refs = {
+    card: document.querySelectorAll(".card"),
     // delete: document.querySelector(".modal__btn--delete"),
     // cancel: document.querySelector(".modal__btn--cancel"),
     tasksBoxPlanned: document.querySelector(".task__box--planned"),
-    taskBoxCurrent: document.querySelector(".task__box--current"),
+    tasksBoxCurrent: document.querySelector(".task__box--current"),
     textareaEl: document.querySelector(".form__search"),
     form: document.querySelector(".form"),
     formBtn: document.querySelector(".form__submit"),
@@ -687,13 +688,89 @@ refs.form.addEventListener("submit", (e)=>{
 refs.modalBtn.addEventListener("click", ()=>refs.modalBackdrop.classList.add("hidden"));
 refs.textareaEl.addEventListener("input", onChangeHeight);
 refs.formBtn.addEventListener("click", onCreateTask);
-refs.tasksBoxPlanned.addEventListener("click", onDeleteTask);
-// refs.cancel.addEventListener("click", (e) =>
-//   e.currentTarget.closest(".backdrop").classList.add("hidden")
-// );
-let tasks = JSON.parse(localStorage.getItem("userTask"));
-if (!tasks) tasks = [];
-else refs.tasksBoxPlanned.innerHTML = tasks.map(createCards).join(" ");
+refs.tasksBoxPlanned.addEventListener("click", onDeleteTaskOnPlanned);
+refs.tasksBoxCurrent.addEventListener("click", onDeleteTaskOnCurrent);
+let tasks = JSON.parse(localStorage.getItem("tasks"));
+let planedTasks = null;
+let currentTask = null;
+let timerPlanned = false;
+if (tasks === null) tasks = [];
+sortTasks();
+function sortTasks() {
+    currentTask = [];
+    planedTasks = [];
+    tasks.forEach((el)=>{
+        if (el.time <= Date.now()) {
+            currentTask.push(el);
+            return;
+        }
+        planedTasks.push(el);
+    });
+}
+function paintTasksPlanned() {
+    refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
+}
+function paintTasksCurrent() {
+    refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
+}
+function go() {
+    startCurrentTimer();
+    startPlannedTimer();
+}
+if (currentTask.length >= 1) startCurrentTimer();
+if (planedTasks.length >= 1) startPlannedTimer();
+function startCurrentTimer() {
+    paintTasksCurrent();
+    [
+        ...refs.tasksBoxCurrent.children
+    ].forEach((el)=>{
+        let time = el.querySelector(".time").textContent;
+        el.querySelector(".time").textContent = changeTime(time);
+        el.dataset.timerId = setInterval(()=>{
+            console.log("startCurrentTimer");
+            time = Number(time) + 1000;
+            el.querySelector(".time").textContent = changeTime(time);
+        }, 1000);
+    });
+}
+function startPlannedTimer() {
+    paintTasksPlanned();
+    [
+        ...refs.tasksBoxPlanned.children
+    ].forEach((el)=>{
+        let time = el.querySelector(".time").textContent;
+        el.querySelector(".time").textContent = changeTime(time);
+        el.dataset.timerId = setInterval(()=>{
+            time -= 1000;
+            console.log("startPlannedTimer");
+            if (time <= 0) {
+                clearInterval(el.dataset.timerId);
+                clearIntervalByIdCurrent();
+                clearIntervalByIdPlanned();
+                sortTasks();
+                go();
+                return;
+            }
+            el.querySelector(".time").textContent = changeTime(time);
+        }, 1000);
+    });
+}
+function clearIntervalByIdPlanned() {
+    [
+        ...refs.tasksBoxPlanned.children
+    ].forEach((el)=>{
+        clearInterval(el.dataset.timerId);
+        console.log("\u044F \u0443\u0434\u0430\u043B\u0438\u043B \u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B planned");
+    });
+}
+function clearIntervalByIdCurrent() {
+    [
+        ...refs.tasksBoxCurrent.children
+    ].forEach((el)=>{
+        clearInterval(el.dataset.timerId);
+        console.log("\u044F \u0443\u0434\u0430\u043B\u0438\u043B \u0438\u043D\u0442\u0435\u0440\u0432\u0430\u043B current");
+    });
+}
 function onChangeHeight() {
     if (refs.textareaEl.scrollHeight <= 71) return;
     refs.textareaEl.style.height = "auto";
@@ -706,52 +783,72 @@ function onCreateTask() {
     }
     sendDataOnLocalStorage(refs.textareaEl.value);
     refs.textareaEl.value = "";
-    refs.tasksBoxPlanned.innerHTML = tasks.map(createCards).join(" ");
+    clearIntervalByIdCurrent();
+    clearIntervalByIdPlanned();
+    go();
 }
-function onDeleteTask(e) {
+function onDeleteTaskOnPlanned(e) {
     if (!e.target.closest(".card__button")) return;
     for(let i = 0; i < tasks.length; i++)if (tasks[i].id === Number(e.target.closest(".card").children[2].textContent)) {
         tasks.splice(i, 1);
-        console.log(i);
-        localStorage.setItem("userTask", JSON.stringify(tasks));
-        refs.tasksBoxPlanned.innerHTML = tasks.map(createCards).join(" ");
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        sortTasks();
+        clearIntervalByIdPlanned();
+        refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
+        startPlannedTimer();
+        return;
+    }
+}
+function onDeleteTaskOnCurrent(e) {
+    if (!e.target.closest(".card__button")) return;
+    for(let i = 0; i < tasks.length; i++)if (tasks[i].id === Number(e.target.closest(".card").children[2].textContent)) {
+        tasks.splice(i, 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        sortTasks();
+        clearIntervalByIdCurrent();
+        refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
+        startCurrentTimer();
         return;
     }
 }
 function sendDataOnLocalStorage(value) {
     tasks.push(...createData(value));
     tasks.sort((a, b)=>a.time - b.time);
-    localStorage.setItem("userTask", JSON.stringify(tasks));
+    sortTasks();
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 function createData(value) {
     return [
         {
             name: value,
-            time: 3600000,
-            id: Date.now()
+            // time: Date.now() + 3600000,
+            time: Date.now() + 4000,
+            id: Date.now() + 1
         },
         {
             name: value,
-            time: 86400000,
-            id: Date.now()
+            time: Date.now() + 86400000,
+            id: Date.now() + 2
         },
         {
             name: value,
-            time: 604800000,
-            id: Date.now()
+            time: Date.now() + 604800000,
+            id: Date.now() + 3
         },
         {
             name: value,
-            time: 2592000000,
-            id: Date.now()
+            time: Date.now() + 2592000000,
+            id: Date.now() + 4
         }
     ];
 }
 function createCards(value) {
+    let currentTime = value.time - Date.now();
+    if (currentTime.toString()[0] === "-") currentTime = currentTime.toString().slice(1);
     return `
   <div class="card">
     <p class="card__subtitle">${value.name}</p>
-    <span class="time">${changeTime(value.time)}</span>
+    <span class="time">${currentTime}</span>
     <span class="visually-hidden">${value.id}</span>
     <button type="button" class="card__button">
       <svg class="card__svg">
