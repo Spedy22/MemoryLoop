@@ -102,6 +102,7 @@ function onCreateTask() {
   sendDataOnLocalStorage(refs.textareaEl.value);
 
   refs.textareaEl.value = "";
+  refs.textareaEl.style.height = "auto";
   clearIntervals(refs.tasksBoxPlanned);
   clearIntervals(refs.tasksBoxCurrent);
   startTimer(refs.tasksBoxPlanned);

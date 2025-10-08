@@ -28,21 +28,34 @@ img, picture {
 
 body {
   background-color: #f2f2f2;
-  padding-top: 30px;
-  padding-bottom: 80px;
+  padding-top: 100px;
+  padding-bottom: 100px;
   font-family: ABeeZee, sans-serif;
 }
 
 .container {
   justify-content: center;
   align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
   display: flex;
 }
 
+.back__image {
+  z-index: -1;
+  background-image: url("Dark.ea558dc3.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 .wrapper {
-  background-color: #fff;
+  backdrop-filter: blur(20px);
   border-radius: 15px;
   width: 1280px;
   padding: 90px 64px;
@@ -63,9 +76,10 @@ body {
 }
 
 .form__search {
+  opacity: 0;
   resize: none;
   text-align: center;
-  color: #7c7c7c;
+  color: #000b;
   background-color: #f2f3f2;
   border: 2px solid #0000;
   border-radius: 15px;
@@ -75,11 +89,12 @@ body {
   padding: 15px;
   font-size: 18px;
   font-weight: 600;
-  transition: box-shadow .3s cubic-bezier(.23, 1, .32, 1);
+  transition: box-shadow .3s cubic-bezier(.23, 1, .32, 1), opacity .9s cubic-bezier(.23, 1, .32, 1);
   overflow: hidden;
 }
 
-.form__search:hover, .form__search:focus, .form__search:active {
+.form__search:hover, .form__search:focus, .form__search:active, .form__search:not(:placeholder-shown) {
+  opacity: 1;
   box-shadow: 0 4px 12px #0003;
 }
 
@@ -95,9 +110,9 @@ body {
 
 .form__placeholder {
   pointer-events: none;
-  color: #7c7c7c;
+  color: #000;
   width: max-content;
-  font-size: 18px;
+  font-size: 23px;
   font-weight: 600;
   transition: transform .44s cubic-bezier(.445, .05, .55, .95);
   position: absolute;
@@ -109,7 +124,7 @@ body {
 .form__submit {
   text-align: center;
   color: #fff9ff;
-  background-color: #53b175;
+  background-color: #c79b65de;
   border-radius: 19px;
   width: 100%;
   margin-top: 25px;
@@ -121,7 +136,7 @@ body {
 }
 
 .form__submit:hover, .form__submit:focus, .form__submit:active {
-  background-color: #4ea16d;
+  background-color: #9b7649de;
 }
 
 .task__wrapper {
@@ -254,7 +269,7 @@ body {
 }
 
 .card {
-  background: #37e091;
+  background-color: #c79b6587;
   border-radius: 16px;
   flex-direction: column;
   gap: 10px;
@@ -264,23 +279,23 @@ body {
   font-family: sans-serif;
   display: flex;
   position: relative;
-  box-shadow: 0 10px 25px #00000026;
+  box-shadow: 0 4px 12px #0000004d, 0 8px 24px #0003;
 }
 
 .card__subtitle {
-  color: #333;
+  color: #0c0303;
   font-size: 18px;
   font-weight: 600;
 }
 
 .time {
-  color: #777;
+  color: #6b0c0c;
   font-size: 14px;
 }
 
 .card__button {
   cursor: pointer;
-  background: gray;
+  background-color: #0000;
   border: none;
   border-radius: 50%;
   justify-content: center;
@@ -291,6 +306,7 @@ body {
   position: absolute;
   top: -10px;
   right: -10px;
+  box-shadow: 0 4px 12px #0000004d, 0 8px 24px #0003;
 }
 
 .card__svg {
