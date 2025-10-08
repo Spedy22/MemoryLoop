@@ -374,9 +374,9 @@ body {
   align-items: center;
   justify-content: center;
 }
-
 .card__svg {
-  width: 14px;
-  height: 14px;
+  display: block;
+  width: 20px;
+  height: 20px;
   fill: #ffffff;
 }

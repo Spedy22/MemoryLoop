@@ -1,11 +1,9 @@
 import Notiflix from "notiflix";
 
 const refs = {
-  card: document.querySelectorAll(".card"),
-  // delete: document.querySelector(".modal__btn--delete"),
-  // cancel: document.querySelector(".modal__btn--cancel"),
   tasksBoxPlanned: document.querySelector(".task__box--planned"),
   tasksBoxCurrent: document.querySelector(".task__box--current"),
+  wrapperBox: document.querySelector(".task__wrapper--box"),
   textareaEl: document.querySelector(".form__search"),
   form: document.querySelector(".form"),
   formBtn: document.querySelector(".form__submit"),
@@ -21,23 +19,23 @@ refs.modalBtn.addEventListener("click", () =>
 );
 refs.textareaEl.addEventListener("input", onChangeHeight);
 refs.formBtn.addEventListener("click", onCreateTask);
-refs.tasksBoxPlanned.addEventListener("click", onDeleteTaskOnPlanned);
-refs.tasksBoxCurrent.addEventListener("click", onDeleteTaskOnCurrent);
+refs.wrapperBox.addEventListener("click", deleteTask);
 
 let tasks = JSON.parse(localStorage.getItem("tasks"));
 let planedTasks = null;
 let currentTask = null;
-let timerPlanned = false;
 
-if (tasks === null) {
-  tasks = [];
-}
+if (tasks === null) tasks = [];
 
 sortTasks();
+
+if (currentTask.length >= 1) startTimer(refs.tasksBoxCurrent);
+if (planedTasks.length >= 1) startTimer(refs.tasksBoxPlanned);
 
 function sortTasks() {
   currentTask = [];
   planedTasks = [];
+
   tasks.forEach((el) => {
     if (el.time <= Date.now()) {
       currentTask.push(el);
@@ -47,75 +45,43 @@ function sortTasks() {
   });
 }
 
-function paintTasksPlanned() {
-  refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
-}
+function startTimer(container) {
+  const tasksList = container.classList.contains("task__box--planned")
+    ? planedTasks
+    : currentTask;
 
-function paintTasksCurrent() {
-  refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
-}
+  container.innerHTML = tasksList.map(createCards).join(" ");
 
-function go() {
-  startCurrentTimer();
-  startPlannedTimer();
-}
-
-if (currentTask.length >= 1) {
-  startCurrentTimer();
-}
-
-if (planedTasks.length >= 1) {
-  startPlannedTimer();
-}
-
-function startCurrentTimer() {
-  paintTasksCurrent();
-  [...refs.tasksBoxCurrent.children].forEach((el) => {
+  [...container.children].forEach((el) => {
     let time = el.querySelector(".time").textContent;
     el.querySelector(".time").textContent = changeTime(time);
-    el.dataset.timerId = setInterval(() => {
-      console.log("startCurrentTimer");
-      time = Number(time) + 1000;
+    if (container.classList.contains("task__box--planned")) {
+      el.dataset.timerId = setInterval(() => {
+        time -= 1000;
 
-      el.querySelector(".time").textContent = changeTime(time);
-    }, 1000);
+        if (time <= 0) {
+          clearInterval(el.dataset.timerId);
+          clearIntervals(refs.tasksBoxPlanned);
+          clearIntervals(refs.tasksBoxCurrent);
+          sortTasks();
+          startTimer(refs.tasksBoxPlanned);
+          startTimer(refs.tasksBoxCurrent);
+
+          return;
+        }
+        el.querySelector(".time").textContent = changeTime(time);
+      }, 1000);
+    } else {
+      el.dataset.timerId = setInterval(() => {
+        time = Number(time) + 1000;
+        el.querySelector(".time").textContent = changeTime(time);
+      }, 1000);
+    }
   });
 }
 
-function startPlannedTimer() {
-  paintTasksPlanned();
-  [...refs.tasksBoxPlanned.children].forEach((el) => {
-    let time = el.querySelector(".time").textContent;
-    el.querySelector(".time").textContent = changeTime(time);
-    el.dataset.timerId = setInterval(() => {
-      time -= 1000;
-      console.log("startPlannedTimer");
-
-      if (time <= 0) {
-        clearInterval(el.dataset.timerId);
-        clearIntervalByIdCurrent();
-        clearIntervalByIdPlanned();
-        sortTasks();
-        go();
-        return;
-      }
-      el.querySelector(".time").textContent = changeTime(time);
-    }, 1000);
-  });
-}
-
-function clearIntervalByIdPlanned() {
-  [...refs.tasksBoxPlanned.children].forEach((el) => {
-    clearInterval(el.dataset.timerId);
-    console.log("я удалил интервал planned");
-  });
-}
-
-function clearIntervalByIdCurrent() {
-  [...refs.tasksBoxCurrent.children].forEach((el) => {
-    clearInterval(el.dataset.timerId);
-    console.log("я удалил интервал current");
-  });
+function clearIntervals(container) {
+  [...container.children].forEach((el) => clearInterval(el.dataset.timerId));
 }
 
 function onChangeHeight() {
@@ -136,53 +102,31 @@ function onCreateTask() {
   sendDataOnLocalStorage(refs.textareaEl.value);
 
   refs.textareaEl.value = "";
-  clearIntervalByIdCurrent();
-  clearIntervalByIdPlanned();
-  go();
+  clearIntervals(refs.tasksBoxPlanned);
+  clearIntervals(refs.tasksBoxCurrent);
+  startTimer(refs.tasksBoxPlanned);
+  startTimer(refs.tasksBoxCurrent);
 }
 
-function onDeleteTaskOnPlanned(e) {
+function deleteTask(e) {
   if (!e.target.closest(".card__button")) {
     return;
   }
+  const card = e.target.closest(".card");
+  const id = Number(card.dataset.id);
 
-  for (let i = 0; i < tasks.length; i++) {
-    if (
-      tasks[i].id === Number(e.target.closest(".card").children[2].textContent)
-    ) {
-      tasks.splice(i, 1);
+  tasks = tasks.filter((task) => task.id !== id);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      sortTasks();
-      clearIntervalByIdPlanned();
-      refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
+  sortTasks();
+  clearIntervals(refs.tasksBoxPlanned);
+  clearIntervals(refs.tasksBoxCurrent);
 
-      startPlannedTimer();
-      return;
-    }
-  }
-}
+  refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
+  refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
 
-function onDeleteTaskOnCurrent(e) {
-  if (!e.target.closest(".card__button")) {
-    return;
-  }
-
-  for (let i = 0; i < tasks.length; i++) {
-    if (
-      tasks[i].id === Number(e.target.closest(".card").children[2].textContent)
-    ) {
-      tasks.splice(i, 1);
-
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      sortTasks();
-      clearIntervalByIdCurrent();
-      refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
-
-      startCurrentTimer();
-      return;
-    }
-  }
+  startTimer(refs.tasksBoxPlanned);
+  startTimer(refs.tasksBoxCurrent);
 }
 
 function sendDataOnLocalStorage(value) {
@@ -197,9 +141,7 @@ function createData(value) {
   return [
     {
       name: value,
-      // time: Date.now() + 3600000,
-      time: Date.now() + 4000,
-
+      time: Date.now() + 3600000,
       id: Date.now() + 1,
     },
     {
@@ -228,17 +170,22 @@ function createCards(value) {
   }
 
   return `
-  <div class="card">
+  <div data-id="${value.id}" class="card">
     <p class="card__subtitle">${value.name}</p>
     <span class="time">${currentTime}</span>
-    <span class="visually-hidden">${value.id}</span>
     <button type="button" class="card__button">
-      <svg class="card__svg">
-        <use href="./img/symbol-defs.svg#icon-x-close"></use>
+      <svg class="card__svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6L18 18M6 18L18 6" stroke="#fff" stroke-width="3"/>
       </svg>
     </button>
   </div>
   `;
+}
+
+{
+  /* <svg class="card__svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6L18 18M6 18L18 6" stroke="#fff" stroke-width="3"/>
+      </svg> */
 }
 
 function changeTime(ms) {

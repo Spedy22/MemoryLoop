@@ -295,7 +295,8 @@ body {
 
 .card__svg {
   fill: #fff;
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 /*# sourceMappingURL=MemoryLoop.c92073ef.css.map */
