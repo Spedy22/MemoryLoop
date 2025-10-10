@@ -680,12 +680,14 @@ const refs = {
     modalBtn: document.querySelector(".modal__btn"),
     modalBackdrop: document.querySelector(".backdrop")
 };
-refs.form.addEventListener("submit", (e)=>{
-    e.preventDefault();
-});
+refs.form.addEventListener("submit", onCreateTask);
 refs.modalBtn.addEventListener("click", ()=>refs.modalBackdrop.classList.add("hidden"));
 refs.textareaEl.addEventListener("input", onChangeHeight);
-refs.formBtn.addEventListener("click", onCreateTask);
+refs.textareaEl.addEventListener("keydown", (e)=>{
+    if (e.code !== "Enter") return;
+    e.preventDefault();
+    onCreateTask(e);
+});
 refs.wrapperBox.addEventListener("click", deleteTask);
 let tasks = JSON.parse(localStorage.getItem("tasks"));
 let planedTasks = null;
@@ -738,11 +740,12 @@ function clearIntervals(container) {
     ].forEach((el)=>clearInterval(el.dataset.timerId));
 }
 function onChangeHeight() {
-    if (refs.textareaEl.scrollHeight <= 71) return;
+    if (refs.textareaEl.scrollHeight <= 76) return;
     refs.textareaEl.style.height = "auto";
     refs.textareaEl.style.height = refs.textareaEl.scrollHeight + "px";
 }
-function onCreateTask() {
+function onCreateTask(e) {
+    e.preventDefault();
     if (refs.textareaEl.value.length === 0) {
         (0, _notiflixDefault.default).Notify.warning("Enter a task consisting of more than one letter");
         return;
@@ -750,6 +753,7 @@ function onCreateTask() {
     sendDataOnLocalStorage(refs.textareaEl.value);
     refs.textareaEl.value = "";
     refs.textareaEl.style.height = "auto";
+    console.log(refs.textareaEl.style.height);
     clearIntervals(refs.tasksBoxPlanned);
     clearIntervals(refs.tasksBoxCurrent);
     startTimer(refs.tasksBoxPlanned);
@@ -757,17 +761,20 @@ function onCreateTask() {
 }
 function deleteTask(e) {
     if (!e.target.closest(".card__button")) return;
-    const card = e.target.closest(".card");
-    const id = Number(card.dataset.id);
-    tasks = tasks.filter((task)=>task.id !== id);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    sortTasks();
-    clearIntervals(refs.tasksBoxPlanned);
-    clearIntervals(refs.tasksBoxCurrent);
-    refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
-    refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
-    startTimer(refs.tasksBoxPlanned);
-    startTimer(refs.tasksBoxCurrent);
+    e.target.closest(".card").classList.add("removing");
+    setTimeout(()=>{
+        const card = e.target.closest(".card");
+        const id = Number(card.dataset.id);
+        tasks = tasks.filter((task)=>task.id !== id);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        sortTasks();
+        clearIntervals(refs.tasksBoxPlanned);
+        clearIntervals(refs.tasksBoxCurrent);
+        refs.tasksBoxPlanned.innerHTML = planedTasks.map(createCards).join(" ");
+        refs.tasksBoxCurrent.innerHTML = currentTask.map(createCards).join(" ");
+        startTimer(refs.tasksBoxPlanned);
+        startTimer(refs.tasksBoxCurrent);
+    }, 400);
 }
 function sendDataOnLocalStorage(value) {
     tasks.push(...createData(value));
@@ -811,6 +818,7 @@ function createCards(value) {
         <path d="M6 6L18 18M6 18L18 6" stroke="#fff" stroke-width="3"/>
       </svg>
     </button>
+    <div class="card__delete-mask"></div>
   </div>
   `;
 }

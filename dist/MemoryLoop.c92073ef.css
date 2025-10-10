@@ -43,7 +43,7 @@ body {
 
 .back__image {
   z-index: -1;
-  background-image: url("Dark.ea558dc3.jpg");
+  background-image: url("Dark-cut.bec23aca.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -76,26 +76,26 @@ body {
 }
 
 .form__search {
-  opacity: 0;
   resize: none;
   text-align: center;
   color: #000b;
-  background-color: #f2f3f2;
+  background-color: #f2f3f200;
   border: 2px solid #0000;
   border-radius: 15px;
   outline: none;
   width: 100%;
-  height: 71px;
+  height: 76px;
   padding: 15px;
   font-size: 18px;
   font-weight: 600;
-  transition: box-shadow .3s cubic-bezier(.23, 1, .32, 1), opacity .9s cubic-bezier(.23, 1, .32, 1);
+  transition: background-color .5s cubic-bezier(.23, 1, .32, 1);
+  display: inline-block;
   overflow: hidden;
+  box-shadow: 0 4px 12px #0000004d, 0 8px 24px #0003;
 }
 
 .form__search:hover, .form__search:focus, .form__search:active, .form__search:not(:placeholder-shown) {
-  opacity: 1;
-  box-shadow: 0 4px 12px #0003;
+  background-color: #f2f3f2;
 }
 
 .form__search:not(:placeholder-shown) + .form__placeholder, .form__search:focus + .form__placeholder {
@@ -132,7 +132,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   line-height: 100%;
-  transition: background-color .3s cubic-bezier(.23, 1, .32, 1);
+  transition: background-color .5s cubic-bezier(.23, 1, .32, 1);
 }
 
 .form__submit:hover, .form__submit:focus, .form__submit:active {
@@ -294,6 +294,7 @@ body {
 }
 
 .card__button {
+  z-index: 2;
   cursor: pointer;
   background-color: #0000;
   border: none;
@@ -314,5 +315,31 @@ body {
   width: 20px;
   height: 20px;
   display: block;
+}
+
+.card__delete-mask {
+  opacity: 0;
+  pointer-events: none;
+  background-color: #ece5ddb7;
+  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  transition: opacity .5s cubic-bezier(.23, 1, .32, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.card__button:hover + .card__delete-mask {
+  opacity: 1;
+}
+
+.card {
+  transition: opacity .3s, transform .3s;
+}
+
+.card.removing {
+  opacity: 0;
+  transform: scale(.9);
 }
 /*# sourceMappingURL=MemoryLoop.c92073ef.css.map */

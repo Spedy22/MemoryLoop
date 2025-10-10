@@ -58,7 +58,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(../img/Dark.jpg);
+  background-image: url(../img/Dark-cut.jpg);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -70,7 +70,6 @@ body {
 
   border-radius: 15px;
 
-  /* background-color: #ffffff; */
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 50px 0 rgba(0, 0, 0, 0.15);
 }
@@ -89,20 +88,21 @@ body {
 }
 
 .form__search {
-  opacity: 0;
+  display: inline-block;
+
+  /* opacity: 0; */
   padding: 15px;
   width: 100%;
-  height: 71px;
+  height: 76px;
   border-radius: 15px;
 
   border: 2px solid transparent;
   resize: none;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: background-color 500ms cubic-bezier(0.23, 1, 0.32, 1);
 
-  transition: box-shadow 300ms cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 900ms cubic-bezier(0.23, 1, 0.32, 1);
-
-  background-color: #f2f3f2;
+  background-color: #f2f3f200;
   outline: none;
   font-weight: 600;
   font-size: 18px;
@@ -114,8 +114,7 @@ body {
 .form__search:focus,
 .form__search:active,
 .form__search:not(:placeholder-shown) {
-  opacity: 1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: #f2f3f2;
 }
 
 .form__search:not(:placeholder-shown) + .form__placeholder,
@@ -151,7 +150,7 @@ body {
   padding: 25px;
   border-radius: 19px;
 
-  transition: background-color 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition: background-color 500ms cubic-bezier(0.23, 1, 0.32, 1);
 
   font-weight: 600;
   font-size: 18px;
@@ -355,6 +354,7 @@ body {
 
 .card {
   position: relative;
+
   max-width: 620px;
   min-height: 100px;
   padding: 20px;
@@ -379,6 +379,7 @@ body {
 }
 
 .card__button {
+  z-index: 2;
   position: absolute;
   top: -10px;
   right: -10px;
@@ -399,4 +400,31 @@ body {
   width: 20px;
   height: 20px;
   fill: #ffffff;
+}
+
+.card__delete-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  border-radius: 16px;
+  background-color: #ece5ddb7;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card__button:hover + .card__delete-mask {
+  opacity: 1;
+}
+
+.card {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.card.removing {
+  opacity: 0;
+  transform: scale(0.9);
 }
